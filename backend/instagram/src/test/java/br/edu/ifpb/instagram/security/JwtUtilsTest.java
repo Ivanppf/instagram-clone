@@ -43,7 +43,7 @@ public class JwtUtilsTest {
     void shouldGenerateTokenSuccessfully() {
 
         assertNotNull(token);
-        assertFalse(token.isEmpty());
+        assertFalse(token.isBlank());
         String[] parts = token.split("\\.");
         assertEquals(3, parts.length);
 
@@ -55,7 +55,7 @@ public class JwtUtilsTest {
         String name = jwtUtils.getUsernameFromToken(token);
 
         assertNotNull(name);
-        assertFalse(name.isEmpty());
+        assertFalse(name.isBlank());
         assertEquals("usuarioTeste", name);
 
     }
