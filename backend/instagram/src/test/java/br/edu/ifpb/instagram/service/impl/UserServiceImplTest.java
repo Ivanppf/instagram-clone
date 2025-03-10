@@ -1,10 +1,13 @@
 package br.edu.ifpb.instagram.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,5 +95,39 @@ public class UserServiceImplTest {
         assertNull(createdUser.encryptedPassword());
 
         verify(userRepository).save(any(UserEntity.class));
+    }
+
+    @Test
+    void testUpdate_ReturnsUserDto() {
+
+        var userDto = new UserDto(1L, "test_fullname", "username_test", "email_test", "password_test",
+                "encoded_password_test");
+
+        when(userRepository.updatePartialUser(anyString(), anyString(), anyString(),
+                anyString(), anyLong())).thenReturn(Integer.valueOf(1));
+
+        var updatedUser = userService.updateUser(userDto);
+
+        assertNotNull(updatedUser);
+
+        assertEquals("username_test", updatedUser.username());
+
+        verify(userRepository).updatePartialUser(updatedUser.fullName(), updatedUser.email(), updatedUser.username(),
+                updatedUser.encryptedPassword(), updatedUser.id());
+    }
+
+    @Test
+    void testUpdate_ThrowsExceptionWhenUserNotFound() {
+
+        var userDto = new UserDto(1L, "test_fullname", "username_test", "email_test", null,
+                null);
+
+        when(userRepository.updatePartialUser(anyString(), anyString(), anyString(),
+                anyString(), anyLong())).thenReturn(Integer.valueOf(0));
+
+        assertThrows(RuntimeException.class, () -> userService.updateUser(userDto));
+
+        verify(userRepository).updatePartialUser(userDto.fullName(), userDto.email(), userDto.username(),
+                userDto.encryptedPassword(), userDto.id());
     }
 }
