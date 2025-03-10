@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,7 +14,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import br.edu.ifpb.instagram.model.dto.UserDto;
@@ -28,9 +25,6 @@ public class UserServiceImplTest {
 
     @MockitoBean
     UserRepository userRepository; // Repositório simulado
-
-    @MockitoBean
-    PasswordEncoder passwordEncoder;
 
     @Autowired
     UserServiceImpl userService; // Classe sob teste
@@ -83,7 +77,6 @@ public class UserServiceImplTest {
         var userDto = new UserDto(1L, "test_fullname", "username_test", "email_test", "password_test",
                 "encoded_password_test");
 
-        when(passwordEncoder.encode(anyString())).thenReturn("encoded_password_test");
         when(userRepository.save(any(UserEntity.class))).thenAnswer(invoker -> invoker.getArgument(0));
 
         var createdUser = userService.createUser(userDto);
@@ -98,7 +91,6 @@ public class UserServiceImplTest {
         assertNull(createdUser.password());
         assertNull(createdUser.encryptedPassword());
 
-        verify(passwordEncoder).encode(anyString());
         verify(userRepository).save(any(UserEntity.class));
     }
 }
