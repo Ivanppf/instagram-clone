@@ -1,6 +1,7 @@
 package br.edu.ifpb.instagram.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,20 @@ public class UserRepositoryTest {
                                 savedUser.getId());
 
                 assertEquals(1, updatedUser);
+        }
+
+        @Test
+        void testSaveUser() {
+                var user = new UserEntity();
+                user.setEmail("email_test");
+                user.setFullName("fullname_test");
+                user.setUsername("username_test");
+                user.setEncryptedPassword("encrypted_password_test");
+
+                var savedUser = userRepository.save(user);
+
+                assertNotNull(savedUser);
+                assertNotNull(savedUser.getId());
+                assertEquals("username_test", savedUser.getUsername());
         }
 }
