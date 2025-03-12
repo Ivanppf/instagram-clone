@@ -17,11 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 import br.edu.ifpb.instagram.model.entity.UserEntity;
+import br.edu.ifpb.instagram.model.request.UserDetailsRequest;
 import br.edu.ifpb.instagram.repository.UserRepository;
 
 @SpringBootTest
@@ -71,17 +72,26 @@ public class UserControllerTest {
         userRepository.deleteAll();
     }
 
-    // @Test
-    // void testDeleteUser() throws Exception {
-    // var id = userEntities.get(1).getId();
-    // mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/{id}", id)
-    // .contentType(MediaType.APPLICATION_JSON));
-    // }
+    @Test
+    void testDeleteUser() throws Exception {
+        var id = userEntities.get(1).getId();
+        mockMvc.perform(delete("/users/{id}", id))
+               .andExpect(status().isOk())
+               .andExpect(content().string("user was deleted!"));
+    }
 
-    // @Test
-    // void testUpdateUser() {
+    @Test
+    void testUpdateUser() throws Exception{
+        var user = userEntities.get(1);
+         UserDetailsRequest updateRequest = new UserDetailsRequest(user.getId(), user.getEmail(),
+          user.getEncryptedPassword(), "Novo Nome", user.getUsername());
 
-    // }
+        mockMvc.perform(put("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+               .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(user.getId()))
+               .andExpect(jsonPath("$.fullName").value(updateRequest.fullName()));
+    }
 
     @Test
     void getUsers_shouldReturnUserList() throws Exception {
