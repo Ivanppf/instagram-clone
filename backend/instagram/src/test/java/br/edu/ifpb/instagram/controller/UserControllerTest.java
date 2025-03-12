@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.print.attribute.standard.Media;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +39,7 @@ public class UserControllerTest {
     @Autowired
     UserRepository userRepository;
 
-    List<UserEntity> userEntities;
+    List<UserEntity> userEntities = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -70,13 +74,19 @@ public class UserControllerTest {
 
     // @Test
     // void testDeleteUser() throws Exception {
-    //     var id = userEntities.get(1).getId();
-    //     mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/{id}", id)
-    //             .contentType(MediaType.APPLICATION_JSON));
+    // var id = userEntities.get(1).getId();
+    // mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/{id}", id)
+    // .contentType(MediaType.APPLICATION_JSON));
     // }
 
     // @Test
     // void testUpdateUser() {
 
     // }
+
+    @Test
+    void getUsers_shouldReturnForbiddenStatus() throws Exception {
+        mockMvc.perform(get("/api/v1/users").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
+
 }
