@@ -32,7 +32,7 @@ public class UserRepositoryTest {
         List<UserEntity> userEntities = new ArrayList<>();
 
         @BeforeEach
-        void setUp(){
+        void setUp() {
                 UserEntity user1 = new UserEntity();
                 user1.setFullName("João Silva");
                 user1.setUsername("joaosilva");
@@ -51,13 +51,13 @@ public class UserRepositoryTest {
                 user3.setEncryptedPassword("senha789");
                 user3.setEmail("carlos.souza@example.com");
 
-                userEntities.add(testEntityManager.persist(user1)); 
-                userEntities.add(testEntityManager.persist(user2)); 
-                userEntities.add(testEntityManager.persist(user3)); 
+                userEntities.add(testEntityManager.persist(user1));
+                userEntities.add(testEntityManager.persist(user2));
+                userEntities.add(testEntityManager.persist(user3));
         }
 
         @AfterEach
-        void tearDown(){
+        void tearDown() {
                 userEntities.removeAll(userEntities);
                 testEntityManager.flush();
                 testEntityManager.clear();
@@ -65,13 +65,7 @@ public class UserRepositoryTest {
 
         @Test
         void testUpdatePartialUser() {
-                var user = new UserEntity();
-                user.setEmail("email_test");
-                user.setFullName("fullname_test");
-                user.setUsername("username_test");
-                user.setEncryptedPassword("encrypted_password_test");
-
-                var savedUser = testEntityManager.persist(user);
+                var savedUser = userEntities.get(0);
 
                 int updatedUser = userRepository.updatePartialUser(null, "updated_email_test", null, null,
                                 savedUser.getId());
@@ -115,7 +109,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void testDeleteById_Successful(){
+        void testDeleteById_Successful() {
                 Long id = userEntities.get(1).getId();
                 userRepository.deleteById(id);
                 UserEntity user = testEntityManager.find(UserEntity.class, id);
@@ -123,15 +117,15 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void testDeleteById_Unsuccessful(){
+        void testDeleteById_Unsuccessful() {
                 Long id = 20L;
                 userRepository.deleteById(id);
                 var list = userRepository.findAll();
                 assertEquals(userEntities.size(), list.size());
-        }       
-        
+        }
+
         @Test
-        void testFindById_ReturnOptionalNotEmpty(){
+        void testFindById_ReturnOptionalNotEmpty() {
                 Long id = userEntities.get(0).getId();
                 Optional<UserEntity> user = userRepository.findById(id);
                 assertTrue(user.isPresent());
@@ -139,7 +133,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void testFindById_ReturnOptionalEmpty(){
+        void testFindById_ReturnOptionalEmpty() {
                 Long id = 20L;
                 Optional<UserEntity> user = userRepository.findById(id);
                 assertTrue(user.isEmpty());
