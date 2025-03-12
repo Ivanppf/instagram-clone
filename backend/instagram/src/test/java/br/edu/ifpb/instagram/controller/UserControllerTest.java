@@ -89,10 +89,25 @@ public class UserControllerTest {
         var idUser = userEntities.get(indexUser).getId();
 
         mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].fullName").value("João Silva"))
-                .andExpect(jsonPath("$[0].username").value("joaosilva"))
-                .andExpect(jsonPath("$[0].email").value("joao.silva@example.com"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(userEntities.size()))
+                .andExpect(jsonPath("$[" + indexUser + "].id").value(idUser))
+                .andExpect(jsonPath("$[" + indexUser + "].fullName").value("João Silva"))
+                .andExpect(jsonPath("$[" + indexUser + "].username").value("joaosilva"))
+                .andExpect(jsonPath("$[" + indexUser + "].email").value("joao.silva@example.com"));
+    }
+
+    @Test
+    void getUser_shouldReturnUser() throws Exception {
+
+        var idUser = userEntities.get(1).getId();
+
+        mockMvc.perform(get("/users/" + idUser).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(idUser))
+                .andExpect(jsonPath("$.fullName").value("Maria Oliveira"))
+                .andExpect(jsonPath("$.username").value("mariaoliveira"))
+                .andExpect(jsonPath("$.email").value("maria.oliveira@example.com"));
     }
 
 }
