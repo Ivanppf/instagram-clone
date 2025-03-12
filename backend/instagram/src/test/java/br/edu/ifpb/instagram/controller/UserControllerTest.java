@@ -84,7 +84,10 @@ public class UserControllerTest {
     // }
 
     @Test
-    void findUsers_shouldReturnUserList() throws Exception {
+    void getUsers_shouldReturnUserList() throws Exception {
+        var indexUser = 0;
+        var idUser = userEntities.get(indexUser).getId();
+
         mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(1L))
                 .andExpect(jsonPath("$[0].fullName").value("João Silva"))
